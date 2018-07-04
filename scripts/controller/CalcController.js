@@ -38,6 +38,8 @@ class CalcController{
     //Limpa qualquer dado no display da calculadora.
     clearAll(){
         this._operation = [];
+        this._lastNumber = '';
+        this._lastOperator = '';
         this.setLastNumberToDisplay();
     }
     //Deleta a última entrada.
@@ -133,9 +135,6 @@ class CalcController{
                 
                 this.setLastOperation(value);
 
-            }else if(isNaN(value)) {
-                
-                console.log('Outra coisa', value);
             }else{
                 this.pushOperation(value);
                 this.setLastNumberToDisplay();
@@ -149,7 +148,7 @@ class CalcController{
             }else{
                 //Para quando for número. 
                 let newValue = this.getLastOperation().toString() + value.toString();
-                this.setLastOperation(parseInt(newValue));
+                this.setLastOperation(newValue);
 
                 //Atualizar o display da calculadora.
                 this.setLastNumberToDisplay();
@@ -159,6 +158,20 @@ class CalcController{
     //Default do Switch/Case.
     setError(){
         this.displayCalc = "Error";
+    }
+    //Tratamento para número com pontos (vírgula).
+    addDot(){
+        let lastOperation = this.getLastOperation();
+
+        if(typeof lastOperation === 'string' && lastOperation.split('').indexOf('.') > -1) return;
+
+        if(this.isOperator(lastOperation) || !lastOperation){
+            this.pushOperation('0.');
+        }else{
+            this.setLastOperation(lastOperation.toString() + '.');
+        }
+
+        this.setLastNumberToDisplay();
     }
     //Switch case para botões/operações
     execBtn(value){
@@ -197,7 +210,7 @@ class CalcController{
             break;
 
             case 'ponto':
-                this.addOperation('.');
+                this.addDot();
             break;
 
             case '0':
