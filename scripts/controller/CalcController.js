@@ -51,32 +51,58 @@ class CalcController{
     //Método que será utilizado para verificar se o último operador É DIFERENTE de número
     isOperator(value){
         return (['+', '-', '*', '/', '%'].indexOf(value) > -1); 
-    } 
+    }
+    //Dividindo as operações em pares numéricos. (Número, operador, Número). 
+    pushOperation(value){
+        this._operation.push(value);
 
+        if(this._operation.length > 3 ){
+
+            this.calc();
+        }
+    }
+    //Calculando o resultado das operações
+    calc(){
+        let last = this._operation.pop();
+
+        let result = eval(this._operation.join(""));
+
+        this._operation = [result, last];
+    }
+    //Método utilizado para atualizar o display.
+    setLastNumberToDisplay(){
+        
+    }
     //Cria um array "para operações".
     addOperation(value){
-
-        console.log('A', isNaN(this.getLastOperation()));
         
         if(isNaN(this.getLastOperation())){
             //Para quando for string. 
             if(this.isOperator(value)){
                 
-                this._setLastOperation(value);
+                this.setLastOperation(value);
 
             }else if(isNaN(value)) {
                 
-                console.log(value);
+                console.log('Outra coisa', value);
             }else{
-                this._operation.push(value);
+                this.pushOperation(value);
             }
 
         } else {
-            //Para quando for número. 
-            let newValue = this.getLastOperation().toString() + value.toString();
-            this.setLastOperation(parseInt(newValue));
+            //Verificando se a última entrada é um operador
+            if(this.isOperator(value)){
+
+                this.pushOperation(value);
+            }else{
+                //Para quando for número. 
+                let newValue = this.getLastOperation().toString() + value.toString();
+                this.setLastOperation(parseInt(newValue));
+
+                //Atualizar o display da calculadora.
+                this.setLastNumberToDisplay();
+            } 
         }
-        console.log(this._operation);
     }
     //Default do Switch/Case.
     setError(){
